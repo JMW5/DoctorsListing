@@ -5,7 +5,7 @@ import DoctorsList from './subcomponents/DoctorsList';
 import SearchArea from './subcomponents/SearchArea';
 
 import data from '../../data/doctors.json';
-import avatar from '../../assets/avatar.png';
+import avatar from '../../images/avatar.png';
 
 
 class SearchDoctors extends Component {
@@ -13,82 +13,137 @@ class SearchDoctors extends Component {
 		super(props);
 
 		this.state = {
-			"zipcode": "",
-			"doctorsList": data,
-			"distance": 0,
-			"gender": ''
+			"doctorsList": [],
+			"distance": "ALL",
+			"showDistance": false,
+			"gender": "male",
+			"value": ""
 		}
 	}
+
 	
-	onChangeName = (e) => {
+	onChangeZipCode = (e) => {
 		this.setState({
-			"zipcode": e.target.value
+			"value": parseInt(e.target.value)
+		})
+	}
+
+	onChangeDistanceSlider = (e) => {
+		this.setState({
+			"distance": e.target.value,
+		})
+	}
+
+	onChangeGender = (e) => {
+		this.setState({
+			"gender": e.target.value
 		})
 	}
 
 
+	handleClick = () => {
+		this.validateZipCode()
+	}
 
-	
-	getZipCode = () => {
-		let zip = this.state.zipcode
-	
-		//Validation
-		if (!zip) {
+
+	validateZipCode = () => {
+		//Get Zip Code
+		const zipCode = this.state.value
+		const zipCodeLength = zipCode.toString().split('').length
+
+		//Validate Zip
+		if (!zipCode) {
 			alert("Must enter Zip Code to continue...")
-		} else if (zip.split('').length > 5 || zip.split('').length < 5) {
+		} else if (zipCodeLength > 5 || zipCodeLength < 5 || typeof zipCode !== "number") {
 			alert("Must be a valid Zip Code")
-			document.getElementById("zip-input").value = ""
+			document.getElementById('zip-input').value = ''
+			console.log(zipCode)
+		} else {
+			this.setState({
+				"doctorsList": data,
+				"showDistance": true
+			})
 		}
 	}
 
 
+	generateDoctors = () => {
+		const filterDoctorResults = (result) => {
+			
+			//Get distance from results and from input
+			const distance = Math.round(result.locations[0].distance)
+			const inputDistance = this.state.distance
 
-	generateDoctors = (zip) => {
+			//Get gender data from results and from radio buttons
+			let gender = result.gender
+			const inputGender = this.state.gender
 
-		return this.state.doctorsList.results.map((item, index) => {
-			return (
-				<div className="Doctors-section">
-					<div className="doctor">
-						<div className="left-side">
-							<img src={avatar} className="avatar" />
-							<div>
-								<h4 style={{marginBottom: "1em"}}>{item.fullName}</h4>
-								<h4>{item.specialties.map((specialty) => {
-									return <p style={{listStyle: "none", marginTop: "0.25em"}}>{specialty}</p>
-								})}</h4>
-							</div>
-						</div>
-						<div class="right-side">
-							<h5>{item.locations.map((location) => {
-								return (
-									<div className="location-top">
-										<h5>{location.name}</h5>
-										<p>{Math.round(location.distance)} miles</p>
-									</div>
-								)
-							})}</h5>
+			return distance >= inputDistance && gender == inputGender
+		}
+	
+
+        if (this.state.doctorsList.results) {
+			const filteredListOfDoctors = this.state.doctorsList.results.filter(filterDoctorResults)
+			const doctorsList = this.state.doctorsList.results
+
+			//If distance input has value of "ALL" then load original results else load filtered list
+			if (this.state.distance == "ALL" || this.state.distance == 30) {
+				return doctorsList.map(this.doctorSection)
+			} else {
+				return filteredListOfDoctors.map(this.doctorSection)
+			}
+		}
+	}
+
+
+	doctorSection = (item, index) => {
+
+		return (
+			<div className="Doctors-section">
+				<div className="doctor">
+					<div className="left-side">
+						<img src={avatar} className="avatar" />
+						<div>
+							<h4 className="doctor--fullname" style={{marginBottom: "1em"}}><a href="{item.url}" className="doctor--link">{item.fullName}</a></h4>
+							<h4 className="doctor--specialty">{item.specialties.sort().map((specialty) => {
+								return <p style={{listStyle: "none", marginTop: "0.25em"}}>{specialty}</p>
+							})}</h4>
 						</div>
 					</div>
-					<hr />
+					<div className="right-side">
+						<div>{item.locations.map((location) => {
+							return (
+								<div className="location-top">
+									<h5 className="location"><a href={location.url} className="location--link">{location.name}</a></h5>
+									<p className="location-distance">{Math.round(location.distance)} {Math.round(location.distance) === 1 ? 'mile' : 'miles'}</p>
+								</div>
+							)
+						})}</div>
+					</div>
 				</div>
-			)
-		});
+				<hr />
+			</div>
+		)
 	}
+
+
 
 	render() {
 		return (
 			<Grid>
 			<ZipCode
-				getZipCode={this.getZipCode} 
-				changeName={this.onChangeName.bind(this)}
-			/>
+				handleClick={this.handleClick} 
+				updateZipCode={this.onChangeZipCode}/>
 				<Row>
-					<SearchArea />
+					<SearchArea 
+						handleClick={this.handleClick.bind(this)} 
+						zipCode={this.state.value}
+						distance={this.state.distance}
+						showDistance={this.state.showDistance}
+						updateDistanceSlider={this.onChangeDistanceSlider.bind(this)}
+						updateGender={this.onChangeGender.bind(this)}/>
 					<DoctorsList
-						initalZipCode={this.state.zipcode}
-						doctors={this.generateDoctors.bind(this)}
-						numberOfDoctors={this.state.doctorsList.results.length}
-					/>
+						doctors={this.generateDoctors.bind(this)}/>
 				</Row>
 			</Grid>
 		);

@@ -6,16 +6,16 @@ const ZipCode = (props) => {
 	return (
 		<div className="ZipCode-section">
 			<FormGroup className="ZipCode--input" controlId="formBasicText">
-				<ControlLabel>Zip Code</ControlLabel>
+				<ControlLabel className="ZipCode--label">Zip Code</ControlLabel>
 				<FormControl
 				type="text"
-				onChange={(event) => props.changeName(event)}
-				placeholder="Enter Zip Code"
+				value={props.zipValue}
+				onChange={(event) => props.updateZipCode(event)}
 				id="zip-input"
 				/>
 				<FormControl.Feedback />
 			</FormGroup>
-			<Button onClick={props.getZipCode.bind(this)} className="btnSearch" bsStyle="success">Search</Button>
+			<Button onClick={props.handleClick} className="btnSearch" bsStyle="success">Search</Button>
 		</div>
 	);
 }

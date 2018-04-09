@@ -8,7 +8,7 @@
             "Neurology"
          ],
          "url":"#",
-         "image":"../images/avatar.png",
+         "image":"../../images/avatar.png",
          "gender":"Male",
          "locations":[
             {
@@ -57,7 +57,7 @@
             "Neurology"
          ],
          "url":"#",
-         "image":"../images/drheap.jpg",
+         "image":"../../images/drheap.jpg",
          "gender":"Male",
          "locations":[
             {
@@ -105,7 +105,7 @@
 
          ],
          "url":"#",
-         "image":"../images/avatar.png",
+         "image":"../../images/avatar.png",
          "gender": "Female",
          "locations":[
             {
@@ -181,7 +181,7 @@
             "Neurology"
          ],
          "url":"#",
-         "image":"../images/avatar.png",
+         "image":"../../images/avatar.png",
          "gender":"Female",
          "locations":[
             {
@@ -217,7 +217,7 @@
             "Neurology"
          ],
          "url":"#",
-         "image":"../images/avatar.png",
+         "image":"../../images/avatar.png",
          "gender":"Female",
          "locations":[
             {

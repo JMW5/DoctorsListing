@@ -4,13 +4,11 @@ import { Col } from 'react-bootstrap';
 const DoctorsList = (props) => {
 	return (
 		<Col className="DoctorsList" md={9}>
-			{(props.initalZipCode.split('').length === 5) ?
-				<div>
-					<h3>Totals Results: {props.numberOfDoctors}</h3>
-					{props.doctors()}
-				 </div> : 
-				 "Please Search Something"
-			 }
+			{!props.doctors() ? "" :
+			<div>
+				<h3 className="total-results">Totals Results: {props.doctors().length}</h3>
+				{props.doctors()}
+			</div>}
 		</Col>
 	)
 }
